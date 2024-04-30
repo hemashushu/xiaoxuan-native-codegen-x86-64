@@ -1,0 +1,19 @@
+[package]
+name = "anncodegen-x86-64"
+version = "0.1.0"
+edition = "2021"
+
+license = "MPL-2.0"
+description = ""
+homepage = "https://github.com/hemashushu/xiaoxuan-native-codegen-x86-64"
+documentation = "https://github.com/hemashushu/xiaoxuan-native-codegen-x86-64"
+repository = "https://github.com/hemashushu/xiaoxuan-native-codegen-x86-64"
+readme = "README.md"
+keywords = ["codegen", "x86-64", "xiaoxuan"]
+categories = ["encoding"]
+
+[dependencies]
+object = {version = "0.35.0", features = ["read", "write"]}
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
