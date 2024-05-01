@@ -4,6 +4,9 @@
 ;; the Mozilla Public License version 2.0 and additional exceptions,
 ;; more details in file LICENSE, LICENSE.additional and CONTRIBUTING.
 
+STDOUT_FILENO   equ     1
+SYS_write       equ     1
+
 EXIT_SUCCESS    equ     0
 SYS_exit        equ     60
 
@@ -11,35 +14,54 @@ global _start
 global main
 
 section .rodata
-    var_j   dq  13
+    msg         db  "hello", 10 ;; line feed (LF) = 10
+    msg_len     dq  6
 
 section .text
 _start:
     ;; call function 'main'
-    ;; Calls a function. Push the 64-bit rip register
-    ;; and jump to the <funcName>.
+    ;;
+    ;; instruction 'call' is used for calling a function.
+    ;; push the 64-bit rip register and jump to the <funcName>.
     call    main
 
     ;; exit
-    ; mov     rdi, EXIT_SUCCESS     ;; exit with '0'
-    mov     rdi, rax                    ;; exit with the result of function 'main'
+    mov     rdi, EXIT_SUCCESS     ;; exit with '0'
     mov     rax, SYS_exit
     syscall
 
 main:
+    ;; prologue
     push    rbp
     mov     rbp,rsp
 
-    ;; 11 + var_j
-    mov     rax, 11
-    mov     rcx, qword [var_j]
-    add     rax, rcx
+    mov     rcx, 0x22   ;; for testing
+    mov     r11, 0x33    ;; for testing
 
-    ;; return rax
+    ;; write(file_number, string_addr, string_length)
+    ;;
+    ;; arguments
+    ;; 1   rdi
+    ;; 2   rsi
+    ;; 3   rdx
+    ;; 4   r10
+    ;; 5   r8
+    ;; 6   r9
+
+    mov     rdx, [msg_len]
+    mov     rsi, msg
+    mov     rdi, STDOUT_FILENO
+    mov     rax, SYS_write
+    syscall
+
+    ;; check the values of 'rcx' and 'r11' here
+
+    ;; epilogue
     pop     rbp
 
-    ;; Return from a function. Pop the stack into the
-    ;; rip register, effecting a jump to the line after the call.
+    ;; 'ret' is used for returning from a function.
+    ;; pop the stack into the rip register,
+    ;; effecting a jump to the line after the call.
     ret
 
 ; $ yasm -f elf64 -o base.o base.S

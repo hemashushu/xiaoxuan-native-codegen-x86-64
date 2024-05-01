@@ -7,8 +7,10 @@
 section .text
 global _start
 _start:
-
     ;; todo
+
+fn_without_pro_epi_logue:
+
 
 exit:
     mov rax, 60     ;; SYS_exit

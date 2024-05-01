@@ -23,7 +23,20 @@ fi
 # yasm -g dwarf2 -f elf64 -l base.lst -o base.o base.S
 
 # assemble
-yasm -g dwarf2 -f elf64 -o base.o base.S
+yasm -g dwarf2 -f elf64 -o ins-mov.o ins-mov.S
+yasm -g dwarf2 -f elf64 -o ins-arithmetic.o ins-arithmetic.S
+yasm -g dwarf2 -f elf64 -o ins-comparison.o ins-comparison.S
+yasm -g dwarf2 -f elf64 -o ins-branch.o ins-branch.S
+yasm -g dwarf2 -f elf64 -o ins-stack.o ins-stack.S
+yasm -g dwarf2 -f elf64 -o ins-call.o ins-call.S
+yasm -g dwarf2 -f elf64 -o ins-syscall.o ins-syscall.S
 
 # link
-ld -g -o base.elf base.o
+ld -g -o ins-mov.elf ins-mov.o
+ld -g -o ins-arithmetic.elf ins-arithmetic.o
+ld -g -o ins-comparison.elf ins-comparison.o
+ld -g -o ins-branch.elf ins-branch.o
+ld -g -o ins-stack.elf ins-stack.o
+ld -g -o ins-call.elf ins-call.o
+ld -g -o ins-syscall.elf ins-syscall.o
+

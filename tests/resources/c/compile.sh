@@ -12,11 +12,17 @@ if [ "$ARCH" != "x86_64" ]; then
 fi
 
 # compile
-gcc -Wall -g -c -o base.o base.c
+gcc -Wall -g -c -o syscall.o syscall.c
+gcc -Wall -g -c -o call.o call.c
+gcc -Wall -g -c -o variable-args.o variable-args.c
+gcc -Wall -g -c -o struct.o struct.c
 gcc -Wall -g -c -o extcall.o extcall.c
 
 # link
-gcc -o base.elf base.o
+gcc -o syscall.elf syscall.o
+gcc -o call.elf call.o
+gcc -o variable-args.elf variable-args.o
+gcc -o struct.elf struct.o
 gcc -o extcall.elf extcall.o
 
 # alternative linking
@@ -24,11 +30,11 @@ gcc -o extcall.elf extcall.o
 # ld \
 #     -dynamic-linker /lib64/ld-linux-x86-64.so.2 \
 #     -pie \
-#     -o base.elf \
+#     -o syscall.elf \
 #     /usr/lib/Scrt1.o \
 #     /usr/lib/crti.o \
 #     -L/lib/ \
 #     -L/usr/lib \
-#     base.o \
+#     syscall.o \
 #     -lc \
 #     /usr/lib/crtn.o

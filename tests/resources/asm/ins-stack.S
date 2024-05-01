@@ -7,20 +7,31 @@
 section .text
 global _start
 _start:
-    ;; comparison
+    ;; read the rsp and rbp
+    mov rcx, rsp
+    mov rcx, rbp
 
-    ;; less than
+    ;; push
     mov rax, 11
-    mov rcx, 13
-    cmp rax, rcx
+    push rax
 
-    ;; greater than
-    mov rax, 17
-    cmp rax, 5
+    mov rax, 13
+    push rax
 
-    ;; equals
-    mov rax, 19
-    cmp rax, 19
+    ;; read the rsp and rbp
+    mov rcx, rsp
+    mov rcx, rbp
+
+    ;; clear rax
+    mov rax, 0
+
+    ;; pop
+    pop rax
+    pop rax
+
+    ;; read the rsp and rbp
+    mov rcx, rsp
+    mov rcx, rbp
 
 exit:
     mov rax, 60     ;; SYS_exit
