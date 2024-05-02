@@ -12,17 +12,19 @@ if [ "$ARCH" != "x86_64" ]; then
 fi
 
 # compile
-gcc -Wall -g -c -o syscall.o syscall.c
-gcc -Wall -g -c -o call.o call.c
+gcc -Wall -g -c -o control-flow.o control-flow.c
 gcc -Wall -g -c -o variable-args.o variable-args.c
 gcc -Wall -g -c -o struct.o struct.c
+gcc -Wall -g -c -o call.o call.c
+gcc -Wall -g -c -o syscall.o syscall.c
 gcc -Wall -g -c -o extcall.o extcall.c
 
 # link
-gcc -o syscall.elf syscall.o
-gcc -o call.elf call.o
+gcc -o control-flow.elf control-flow.o
 gcc -o variable-args.elf variable-args.o
 gcc -o struct.elf struct.o
+gcc -o call.elf call.o
+gcc -o syscall.elf syscall.o
 gcc -o extcall.elf extcall.o
 
 # alternative linking
@@ -38,3 +40,6 @@ gcc -o extcall.elf extcall.o
 #     syscall.o \
 #     -lc \
 #     /usr/lib/crtn.o
+
+# generate the LLVM IR for control flow
+clang -S -emit-llvm control-flow.c
