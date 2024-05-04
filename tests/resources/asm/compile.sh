@@ -23,20 +23,22 @@ fi
 # yasm -g dwarf2 -f elf64 -l base.lst -o base.o base.S
 
 # assemble
-yasm -g dwarf2 -f elf64 -o ins-mov.o ins-mov.S
-yasm -g dwarf2 -f elf64 -o ins-arithmetic.o ins-arithmetic.S
-yasm -g dwarf2 -f elf64 -o ins-comparison.o ins-comparison.S
-yasm -g dwarf2 -f elf64 -o ins-branch.o ins-branch.S
-yasm -g dwarf2 -f elf64 -o ins-stack.o ins-stack.S
-yasm -g dwarf2 -f elf64 -o ins-call.o ins-call.S
-yasm -g dwarf2 -f elf64 -o ins-syscall.o ins-syscall.S
+yasm -g dwarf2 -f elf64 -o mov.o mov.S
+yasm -g dwarf2 -f elf64 -o memory.o memory.S
+yasm -g dwarf2 -f elf64 -o arithmetic.o arithmetic.S
+yasm -g dwarf2 -f elf64 -o comparison.o comparison.S
+yasm -g dwarf2 -f elf64 -o branch.o branch.S
+yasm -g dwarf2 -f elf64 -o stack.o stack.S
+yasm -g dwarf2 -f elf64 -o call.o call.S
+yasm -g dwarf2 -f elf64 -o syscall.o syscall.S
 
 # link
-ld -g -o ins-mov.elf ins-mov.o
-ld -g -o ins-arithmetic.elf ins-arithmetic.o
-ld -g -o ins-comparison.elf ins-comparison.o
-ld -g -o ins-branch.elf ins-branch.o
-ld -g -o ins-stack.elf ins-stack.o
-ld -g -o ins-call.elf ins-call.o
-ld -g -o ins-syscall.elf ins-syscall.o
+ld -g -o mov.elf mov.o
+ld -g -o memory.elf memory.o
+ld -g -o arithmetic.elf arithmetic.o
+ld -g -o comparison.elf comparison.o
+ld -g -o branch.elf branch.o
+ld -g -o stack.elf stack.o
+ld -g -o call.elf call.o
+ld -g -o syscall.elf syscall.o
 
