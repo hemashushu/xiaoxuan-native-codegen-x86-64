@@ -36,7 +36,7 @@ main:
     mov     rbp,rsp
 
     mov     rcx, 0x22   ;; for testing
-    mov     r11, 0x33    ;; for testing
+    mov     r11, 0x33   ;; for testing
 
     ;; write(file_number, string_addr, string_length)
     ;;

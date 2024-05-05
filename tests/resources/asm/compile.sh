@@ -25,6 +25,7 @@ fi
 # assemble
 yasm -g dwarf2 -f elf64 -o mov.o mov.S
 yasm -g dwarf2 -f elf64 -o memory.o memory.S
+yasm -g dwarf2 -f elf64 -o conversion.o conversion.S
 yasm -g dwarf2 -f elf64 -o arithmetic.o arithmetic.S
 yasm -g dwarf2 -f elf64 -o comparison.o comparison.S
 yasm -g dwarf2 -f elf64 -o branch.o branch.S
@@ -35,6 +36,7 @@ yasm -g dwarf2 -f elf64 -o syscall.o syscall.S
 # link
 ld -g -o mov.elf mov.o
 ld -g -o memory.elf memory.o
+ld -g -o conversion.elf conversion.o
 ld -g -o arithmetic.elf arithmetic.o
 ld -g -o comparison.elf comparison.o
 ld -g -o branch.elf branch.o

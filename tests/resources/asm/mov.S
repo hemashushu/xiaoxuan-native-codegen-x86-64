@@ -4,11 +4,6 @@
 ;; the Mozilla Public License version 2.0 and additional exceptions,
 ;; more details in file LICENSE, LICENSE.additional and CONTRIBUTING.
 
-section .data
-var_a   dd  31      ;; dd = double word = 2 * 16 = 32bits
-var_b   dd  37
-var_c   dd  0
-
 section .text
 global _start
 _start:
@@ -19,10 +14,9 @@ _start:
     mov ah, 2       ;; 'ah' is the high 8-bit of i16, ax = 2 * 256 + 19 = 531
     mov rcx, rax    ;; rcx <= rax
 
-    ;; accessing memory
-    mov eax, [var_a]        ;; eax = 0x1f
-    mov ecx, [var_a + 4]    ;; ecx = 0x25
-    mov [var_c], ecx        ;; [var_c] = 0x0000_0025
+    ;; NOTE:
+    ;; when the dest reg is <reg32>, the high portion of reg (bits 32 to 63) will be set to ZERO,
+    ;; includes instructions 'mov', 'movzx', 'movsx'
 
 exit:
     ;; syscall 'exit'
