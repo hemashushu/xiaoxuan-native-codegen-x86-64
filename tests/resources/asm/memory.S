@@ -16,6 +16,8 @@ var_e   resq    1   ;; 1 qword data
 section .text
 global _start
 _start:
+
+load:
     ;; load i8
     lea rax, [var_a]
     mov rax, 0xffeeddcc99887766
@@ -46,32 +48,33 @@ _start:
     mov rax, qword [var_d]
 
 store:
+    ;; store with immediate numbers
     mov dword [var_e], 0x99887766   ;; write the low portion
     mov dword [var_e+4], 0xffeeddcc ;; write the high portion
-    mov byte [var_e], 0x81          ;; rewrite the low portion, the high portion should keep unchanged
-    mov word [var_e], 0x8001        ;; rewrite the low portion, the high portion should keep unchanged
-    mov dword [var_e], 0x80000001   ;; rewrite the low portion, the high portion should keep unchanged
-    mov qword [var_e], 0x13         ;; rewrite whole i64
+    mov byte [var_e], 0x81          ;; rewrite the low portion with i8, the high portion beyonds i8 should keep unchanged
+    mov word [var_e], 0x8001        ;; rewrite the low portion with i16, the high portion beyonds i16 should keep unchanged
+    mov dword [var_e], 0x80000001   ;; rewrite the low portion with i32, the high portion beyonds i32 should keep unchanged
+    mov qword [var_e], 0x13         ;; rewrite the whole memory with i64
 
     ;; initialize 'rax'
     mov rax, 0xddccbbaa44332211
 
-    ;; store i8
+    ;; store i8 from reg
     mov qword [var_e], 0x0          ;; clear
     mov byte [var_e], 0xff          ;; store i8 imm
     mov byte [var_e], al            ;; store i8 from reg
 
-    ;; store i16
+    ;; store i16 from reg
     mov qword [var_e], 0x0
     mov word [var_e], 0xffee
     mov word [var_e], ax
 
-    ;; store i32
+    ;; store i32 from reg
     mov qword [var_e], 0x0
     mov dword [var_e], 0xffeeddcc
     mov dword [var_e], eax
 
-    ;; store i64
+    ;; store i64 from reg
     mov qword [var_e], 0x17
     mov qword [var_e], rax
 

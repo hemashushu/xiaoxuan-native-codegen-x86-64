@@ -18,6 +18,8 @@ var_e   resq    1               ;; one i64 data
 section .text
 global _start
 _start:
+
+truncate:
     ;; truncate and mov to reg (i.e. portion mov)
     mov rcx, 0xffeeddcc99887766
 
@@ -34,6 +36,7 @@ _start:
     ;; when the dest reg is <reg32>, the high portion of reg (bits 32 to 63) will be set to ZERO,
     ;; includes instructions 'mov', 'movzx', 'movsx'
 
+truncate_to_memory:
     ;; truncate and store to memory (i.e. portion store)
     mov qword [var_e], 0
     mov byte [var_e], cl    ;; to i8
@@ -73,7 +76,7 @@ unsign_extension:
     mov rax, 0xffeeddcc99887766
     mov eax, ecx    ;; i32 -> i64 (note: i32 -> reg32)
 
-unsign_extension_memory:
+unsign_extension_from_memory:
     ;; unsign extension from memory
     mov rax, 0xffeeddcc99887766
     movzx ax, byte [var_a]      ;; i8 -> i16, the high portion beyonds i16 will keep UNCHANGED, instead of ZERO
@@ -120,7 +123,7 @@ sign_extension:
     mov rax, 0xffeeddcc99887766
     movsxd rax, ecx ;; i32 -> i64
 
-sign_extension_memory:
+sign_extension_from_memory:
     ;; sign extension from memory
     mov rax, 0xffeeddcc99887766
     movsx ax, byte [var_a]      ;; i8 -> i16, the high portion beyonds i16 will keep UNCHANGED, instead of ONE or ZERO

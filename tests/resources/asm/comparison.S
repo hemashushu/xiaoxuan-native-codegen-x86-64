@@ -7,6 +7,8 @@
 section .text
 global _start
 _start:
+
+compare_i64:
     ;; comparison
 
     ;; the 'eflags' register:
@@ -30,6 +32,7 @@ _start:
     mov rax, 19
     cmp rax, 19
 
+compare_i32_i16_i8:
     ;; compare i32, i16 and i8
     mov rax, 0x80000000ffee11aa
     mov rcx, 0x90000000887766aa

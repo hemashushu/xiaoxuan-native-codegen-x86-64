@@ -12,24 +12,26 @@ var_c   dq      0
 section .text
 global _start
 _start:
+
+do_add:
     ;; addition
     ;; 'add <dest>, <src>'
     ;; <dest> = <dest> + <src>
     mov rax, 11
     mov rcx, 13
     add rax, rcx
-    ;; CHECK: rax == 24
+    ;; rax == 24
 
     mov rax, 11
     add rax, 13
-    ;; CHECK:: rax == 24
+    ;; rax == 24
 
     ;; inc
     ;; 'inc <operand>'
     ;; <operand> = <operand> + 1
     mov rax, 11
     inc rax
-    ;; CHECK:: rax == 12
+    ;; rax == 12
 
 do_adc:
     ;; addition with carry
@@ -43,7 +45,7 @@ do_adc:
 
     mov dword [var_c], eax
     mov dword [var_c + 4], ecx
-    ;; CHECK: var_c == 0x34_1000_4466
+    ;; var_c == 0x34_1000_4466
 
 do_sub:
     ;; subtraction
@@ -52,18 +54,18 @@ do_sub:
     mov rax, 19
     mov rcx, 11
     sub rax, rcx
-    ;; CHECK: rax == 8
+    ;; rax == 8
 
     mov rax, 19
     sub rax, 11
-    ;; CHECK: rax == 8
+    ;; rax == 8
 
     ;; dec
     ;; 'dec <operand>'
     ;; <operand> = <operand> - 1
     mov rax, 19
     dec rax
-    ;; CHECK: rax == 18
+    ;; rax == 18
 
 do_mul:
     ;; multiplication
@@ -79,20 +81,20 @@ do_mul:
     mov eax, 4999   ;; note that 'mov ax,...' does not clear the high portion of reg, therefor use 'mov eax, ...' instead
     mov ecx, 5003   ;; note that 'mov ax,...' does not clear the high portion of reg, therefor use 'mov eax, ...' instead
     mul cx
-    ;; CHECK: ax == low part == 40781 (0x9f4d)
-    ;; CHECK: dx == high part == 381 (0x017d)
+    ;; ax == low part == 40781 (0x9f4d)
+    ;; dx == high part == 381 (0x017d)
 
     mov eax, 0x2
     mov ecx, 0xfffffffe
     mul ecx
-    ;; CHECK: eax = 0xfffffffc
-    ;; CHECK: edx = 0x1
+    ;; eax = 0xfffffffc
+    ;; edx = 0x1
 
     mov rax, 0x2
     mov rcx, 0xfffffffe
     mul rcx
-    ;; CHECK: rax = 0x1_fffffffc
-    ;; CHECK: rdx = 0
+    ;; rax = 0x1_fffffffc
+    ;; rdx = 0
 
 do_imul:
     ;; signed multiplication
@@ -109,20 +111,20 @@ do_imul:
     mov eax, 4999    ;; note that 'mov ax,...' does not clear the high portion of reg, therefor use 'mov eax, ...' instead
     mov ecx, 5003    ;; note that 'mov ax,...' does not clear the high portion of reg, therefor use 'mov eax, ...' instead
     imul cx
-    ;; CHECK: ax == low part == 40781 (0x9f4d)
-    ;; CHECK: dx == high part == 381 (0x017d)
+    ;; ax == low part == 40781 (0x9f4d)
+    ;; dx == high part == 381 (0x017d)
 
     mov eax, 0x2
     mov ecx, 0xfffffffe ;; -2
     imul ecx
-    ;; CHECK: eax = 0xFFFFFFFC  ;; -4
-    ;; CHECK: edx = 0xFFFFFFFF
+    ;; eax = 0xFFFFFFFC  ;; -4
+    ;; edx = 0xFFFFFFFF
 
     mov rax, 0x2
     mov rcx, 0xfffffffe ;; NOT -2
     imul rcx
-    ;; CHECK: rax = 0x1FFFFFFFC
-    ;; CHECK: rdx = 0
+    ;; rax = 0x1FFFFFFFC
+    ;; rdx = 0
 
 do_div:
     ;; division
@@ -139,39 +141,39 @@ do_div:
     mov eax, 113
     mov ecx, 11
     div ecx
-    ;; CHECK: rax == quotient == 10
-    ;; CHECK: rdx == remainder == 3
+    ;; rax == quotient == 10
+    ;; rdx == remainder == 3
 
     mov edx, 0
     mov eax, 0xf0000001
     mov ecx, 0x2
     div ecx
-    ;; CHECK: rax == 0x7800_0000
-    ;; CHECK: rdx = 0x1
+    ;; rax == 0x7800_0000
+    ;; rdx = 0x1
 
 do_idiv:
     mov edx, 0      ;; clear the high part of dividend
     mov eax, 113
     mov ecx, 11
     idiv ecx
-    ;; CHECK: rax == quotient == 10
-    ;; CHECK: rdx == remainder == 3
+    ;; rax == quotient == 10
+    ;; rdx == remainder == 3
 
     mov edx, 0xffffffff
     mov eax, 0xf0000001 ;; -268435455
     mov ecx, 0x2
     idiv ecx
-    ;; CHECK: rax == 0xf8000001 ;; -134217727
-    ;; CHECK: rdx = 0xffffffff
+    ;; rax == 0xf8000001 ;; -134217727
+    ;; rdx = 0xffffffff
 
-do_cdq:
+do_cdq_and_idiv:
     mov eax, 113
     cdq
-    ;; CHECK: edx == 0
+    ;; edx == 0
     mov ecx, 11
     idiv ecx
-    ;; CHECK: rax == quotient == 10
-    ;; CHECK: rdx == remainder == 3
+    ;; rax == quotient == 10
+    ;; rdx == remainder == 3
 
     ;; the 'cdq' instruction
     ;; 'cdq'
@@ -179,11 +181,11 @@ do_cdq:
     ;; then 'idiv'
     mov eax, 0x80000001
     cdq
-    ;; CHECK: edx == 0xffffffff
+    ;; edx == 0xffffffff
     mov ecx, 2
     idiv ecx
-    ;; CHECK: rax == quotient == 0xc0000001
-    ;; CHECK: rdx == remainder == 0xffffffff
+    ;; rax == quotient == 0xc0000001
+    ;; rdx == remainder == 0xffffffff
 
 exit:
     mov rax, 60     ;; SYS_exit

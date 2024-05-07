@@ -31,7 +31,8 @@ _start:
     call        fn_local_variables
     ;; expect return value 'rax == 160'
 
-    ;; check rbx==0x22, r10=0x33
+    ;; the 'rax' and 'r10' should be restored
+    ;; rbx==0x22, r10=0x33
 
 exit:
     mov rax, 60     ;; SYS_exit

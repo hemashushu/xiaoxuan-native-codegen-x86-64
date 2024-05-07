@@ -54,7 +54,8 @@ main:
     mov     rax, SYS_write
     syscall
 
-    ;; check the values of 'rcx' and 'r11' here
+    ;; the values of 'rcx' and 'r11'
+    ;; should have been changed by kernel
 
     ;; epilogue
     pop     rbp
