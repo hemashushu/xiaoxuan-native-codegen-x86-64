@@ -8,9 +8,22 @@ section .text
 global _start
 _start:
 
-    ;; jmp
+    ;; unconditional jump
+    ;; 'jmp <label>'
     mov rax, 0
     jmp post_jmp
+
+    ;; conditional jump
+    ;; je      <label>     ; if <op1> == <op2>
+    ;; jne     <label>     ; if <op1> != <op2>
+    ;; jl      <label>     ; signed, if <op1> < <op2>
+    ;; jle     <label>     ; signed, if <op1> <= <op2>
+    ;; jg      <label>     ; signed, if <op1> > <op2>
+    ;; jge     <label>     ; signed; if <op1> >= <op2>
+    ;; jb      <label>     ; unsigned, if <op1> < <op2>
+    ;; jbe     <label>     ; unsigned, if <op1> <= <op2>
+    ;; ja      <label>     ; unsigned, if <op1> > <op2>
+    ;; jae     <label>     ; unsigned, if <op1> >= <op2>
 
 start_je:
     mov rax, 11
