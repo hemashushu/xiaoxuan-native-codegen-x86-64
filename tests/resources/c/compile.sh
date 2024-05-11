@@ -18,6 +18,8 @@ gcc -Wall -g -c -o struct.o struct.c
 gcc -Wall -g -c -o call.o call.c
 gcc -Wall -g -c -o syscall.o syscall.c
 gcc -Wall -g -c -o extcall.o extcall.c
+gcc -Wall -g -c -o float-conversion.o float-conversion.c
+gcc -Wall -g -c -o float-branch.o float-branch.c
 
 # link
 gcc -o control-flow.elf control-flow.o
@@ -26,6 +28,8 @@ gcc -o struct.elf struct.o
 gcc -o call.elf call.o
 gcc -o syscall.elf syscall.o
 gcc -o extcall.elf extcall.o
+gcc -o float-conversion.elf float-conversion.o
+gcc -o float-branch.elf float-branch.o
 
 # alternative linking
 #

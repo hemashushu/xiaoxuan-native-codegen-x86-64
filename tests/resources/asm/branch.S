@@ -8,9 +8,53 @@ section .text
 global _start
 _start:
 
+compare_i64:
+    ;; comparison
+
+    ;; the 'eflags' register:
+    ;;
+    ;;   Bit Name    Symbol  Bit  Use
+    ;; - Carry       CF      0    Used to indicate if the previous operation resulted in a carry.
+    ;; - Zero        ZF      6    Used to indicate if the previous operation resulted in a zero result.
+    ;; - Sign        SF      7    Used to indicate if the result of the previous operation resulted in a 1 in the most significant bit (indicating negative in the context of signed data).
+    ;; - Overflow    OF      11   Used to indicate if the previous operation resulted in an overflow.
+
+    ;; less than
+    mov rax, 11
+    mov rcx, 13
+    cmp rax, rcx    ;; 'cmp <op-left> <op-right>'
+    ;; eflags == (CF, SF)
+
+    ;; greater than
+    mov rax, 17
+    cmp rax, 5
+    ;; eflags == ()
+
+    ;; equals
+    mov rax, 19
+    cmp rax, 19
+    ;; eflags == (ZF)
+
+compare_i32_i16_i8:
+    ;; compare i32, i16 and i8
+    mov rax, 0x80000000ffee11aa
+    mov rcx, 0x90000000887766aa
+
+    cmp rax, rcx    ;; lt
+    ;; eflags == (CF, SF)
+
+    cmp eax, ecx    ;; gt
+    ;; eflags == ()
+
+    cmp ax, cx      ;; lt
+    ;; eflags == (CF, SF)
+
+    cmp al, cl      ;; eq
+    ;; eflags == (ZF)
+
+start_branch:
     ;; unconditional jump
     ;; 'jmp <label>'
-    mov rax, 0
     jmp post_jmp
 
     ;; conditional jump
