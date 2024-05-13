@@ -10,7 +10,7 @@ use object::{Object, ObjectSection};
 
 #[test]
 fn test_print_sections() {
-    let binary = fs::read("tests/resources/c/base.elf").unwrap();
+    let binary = fs::read("tests/resources/c/control-flow.elf").unwrap();
     let elf_file = object::File::parse(&*binary).unwrap();
     for section in elf_file.sections() {
         println!("section: {}", section.name().unwrap());
