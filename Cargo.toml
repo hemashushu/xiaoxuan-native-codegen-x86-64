@@ -13,6 +13,7 @@ keywords = ["codegen", "x86-64", "xiaoxuan"]
 categories = ["encoding"]
 
 [dependencies]
+ason = "0.2.0"
 object = {version = "0.35.0", features = ["read", "write"]}
 
 [dev-dependencies]
