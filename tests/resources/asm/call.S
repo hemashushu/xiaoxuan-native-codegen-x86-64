@@ -73,6 +73,30 @@ exit:
     ; r14         callee saved    |
     ; r15         callee saved    /
 
+    ; the reg number in encoding:
+    ;
+    ; REX.R/X/B   ModRM:reg ModRM:r/m
+    ; |           |
+    ; | /---------/
+    ; | |
+    ; v v
+    ; 0.000     rax
+    ; 0.001     rcx
+    ; 0.010     rdx
+    ; 0.011     rbx
+    ; 0.100     rsp
+    ; 0.101     rbp
+    ; 0.110     rsi
+    ; 0.111     rdi
+    ; 1.000     r8
+    ; 1.001     r9
+    ; 1.010     r10
+    ; 1.011     r11
+    ; 1.100     r12
+    ; 1.101     r13
+    ; 1.110     r14
+    ; 1.111     r15
+
 fn_without_prologue_epilogue:
     ;; fn add(int a, int b) { a + b }
     mov     rax, rdi

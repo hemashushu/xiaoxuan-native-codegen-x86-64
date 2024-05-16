@@ -48,6 +48,21 @@ int main(void)
         119b:       e8 65 01 00 00          call   1305 <sum_float>
     */
     float j = sum_float(3, 1.1, 1.3, 1.7);
+
+    /*
+    11a0:       f2 0f 5a c0             cvtsd2ss xmm0,xmm0
+    11a4:       f3 0f 11 45 fc          movss  DWORD PTR [rbp-0x4],xmm0
+    11a9:       66 0f ef db             pxor   xmm3,xmm3
+    11ad:       f3 0f 5a 5d fc          cvtss2sd xmm3,DWORD PTR [rbp-0x4]
+    11b2:       66 48 0f 7e da          movq   rdx,xmm3
+    11b7:       8b 45 f8                mov    eax,DWORD PTR [rbp-0x8]
+    11ba:       66 48 0f 6e c2          movq   xmm0,rdx
+    11bf:       89 c6                   mov    esi,eax
+    11c1:       48 8d 05 40 0e 00 00    lea    rax,[rip+0xe40]        # 2008 <_IO_stdin_used+0x8>
+    11c8:       48 89 c7                mov    rdi,rax
+    11cb:       b8 01 00 00 00          mov    eax,0x1
+    11d0:       e8 6b fe ff ff          call   1040 <printf@plt>
+    */
     printf("%d %.1f\n", i, j);
 
     return 0;

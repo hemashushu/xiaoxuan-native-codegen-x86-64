@@ -154,9 +154,37 @@ fn test_write_extcall() {
      */
 
     /*
+    loading data
+    ------------
+
     lea    rdi,[rip+0xec0]
                       ^
-                      |--- 0x0ec0 = .rodata (0x2000) - ($rip(0x1144) - addend (0x4)) = 0xebc + 4 => 0x0ec0
+                      |--- 0xec0 = S + A - P
+                                 = .rodata (0x2000) + addend (-0x4) - offset (0x1140)
+                                 = .rodata (0x2000) - (rela offset (0x1140) - addend (-0x4))
+                                 = .rodata (0x2000) - $rip(0x1144)
+                                 = 0xec0
+
+    > R_X86_64_PLT32, R_X86_64_PC32
+    > the linker will use the computation (S + A - P) for the relocation target being modified,
+    > where:
+    >
+    > - S is the value of the symbol (st_value of Elf64_Sym)
+    > - A is the addend (-4 in your case)
+    > - P is the address of the memory location being relocated (the start of the address of the call to Other)
+
+    $ objdump -S -j .rodata extcall.elf
+
+    0000000000002000 <_IO_stdin_used>:
+    2000:       01 00 02 00 48 65 6c 6c 6f 2c 20 77 6f 72 6c 64     ....Hello, world
+    2010:       21 00       ^
+                            |
+                            |--- 0x2004
+    */
+
+    /*
+    runtime dynamic linking
+    -----------------------
 
     call   1030 <puts@plt> <-- trampoline function
            ^
@@ -167,30 +195,88 @@ fn test_write_extcall() {
            |            1026:       ff 25 cc 2f 00 00       jmp    QWORD PTR [rip+0x2fcc]   |    # 3ff8 <_GLOBAL_OFFSET_TABLE_+0x10> -> jump to glibc to load the address of "puts"
            |            102c:       0f 1f 40 00             nop    DWORD PTR [rax+0x0]      |
            \--->    0000000000001030 <puts@plt>:                                            |
-                        1030:       ff 25 ca 2f 00 00       jmp    QWORD PTR [rip+0x2fca]   |    # 4000 puts@got.plt
-                        1036:       68 00 00 00 00          push   0x0                      |         |
-                        103b:       e9 e0 ff ff ff          jmp    1020 <_init+0x20> -------/         |
-                                                                                                      |
-                    22 .got.plt      00000020  0000000000003fe8  0000000000003fe8  00002fe8  2**3     |
-                                     CONTENTS, ALLOC, LOAD, DATA                                      |
-                    $ objdump -s -j .got.plt extcall.elf                                              |
-                                                                                                      |
-                    extcall.elf:     file format elf64-x86-64                                         |
-                                                                                                      |
-                    Contents of section .got.plt:                                                     |
-                    3fe8 e03d0000 00000000 00000000 00000000  .=..............                        |
-                    3ff8 00000000 00000000 36100000 00000000  ........6.......                        | 0x1036
-                                           ^__________________________________________________________/
-
-                                           ^___ after first call, the address of "puts@GLIBC_2.2.5" (e.g. 0x00007ffff7dfca60) is written. // $ objdump -R extcall.elf
+                        1030:       ff 25 ca 2f 00 00       jmp    QWORD PTR [rip+0x2fca]   |    # 4000 <puts@got.plt>
+                        1036:       68 00 00 00 00          push   0x0                      |         |   <-------\
+                        103b:       e9 e0 ff ff ff          jmp    1020 <_init+0x20> -------/         |           |
+                                                                                                      |           |
+                    22 .got.plt      00000020  0000000000003fe8  0000000000003fe8  00002fe8  2**3     |           |
+                                     CONTENTS, ALLOC, LOAD, DATA                                      |           |
+                    $ objdump -s -j .got.plt extcall.elf                                              |           ^
+                                                                                                      |           |
+                    extcall.elf:     file format elf64-x86-64                                         |           |
+                                                                                                      |           |
+                    Contents of section .got.plt:                                                     |           |
+                    3fe8 e03d0000 00000000 00000000 00000000  .=..............                        |           |
+                    3ff8 00000000 00000000 36100000 00000000  ........6.......                        |           |
+                         ^                 ^__________________________________________________________/ 0x1036 ---/
+                         |                                                     |
+                         |                                                     |
+                         \--- filled by 'ld.so' when the program is loaded.    |
+                                                                               |
+                                                                               ^___ after the first time call, the address of
+                                                                               "puts@GLIBC_2.2.5" (e.g. 0x00007ffff7dfca60) will be written.
+                                                                               run '$ objdump -R extcall.elf' to check.
 
 
      */
 
     /*
     1144:       e8 e7 fe ff ff          call   1030 <puts@plt>
-                   -----
-                   ^___  = $rip(0x1149) - 4 - 0x1030(puts@plt) = 0x01_15
+                   -----------
+                   ^___ the offset of call target == 0xfffffee7 == -0x119(-281)
+                   -0x119 = S + A - P
+                          = 0x1030(puts@plt) + addend - rela_offset
+                          = 0x1030(puts@plt) - (rela_offset - addend )
+                          = 0x1030(puts@plt) - $rip(0x1149)
+     */
+
+    /*
+    The following notations are used for specifying relocations in table [*]:
+
+    - A: Represents the addend used to compute the value of the relocatable field.
+    - B: Represents the base address at which a shared object has been loaded into memory during execution.
+         Generally, a shared object is built with a 0 base virtual address, but the execution address will be different.
+    - G: Represents the offset into the global offset table at which the relocation entry's symbol will reside during execution.
+    - GOT: Represents the address of the global offset table.
+    - L: Represents the place (section offset or address) of the Procedure Linkage Table entry for a symbol.
+    - P: Represents the place (section offset or address) of the storage unit being relocated (computed using r_offset).
+    - S: Represents the value of the symbol whose index resides in the relocation entry.
+
+    The AMD64 ABI architectures uses only Elf64_Rela relocation entries with explicit addends. The r_addend member serves as the relocation addend.
+
+    Table: Relocation Types
+    | Name                  | Value | Field  | Calculation      |
+    |-----------------------|-------|--------|------------------|
+    | R_X86_64_NONE         | 0     | none   | none             |
+    | R_X86_64_64           | 1     | word64 | S + A            |
+    | R_X86_64_PC32         | 2     | word32 | S + A - P        |
+    | R_X86_64_GOT32        | 3     | word32 | G + A            |
+    | R_X86_64_PLT32        | 4     | word32 | L + A - P        |
+    | R_X86_64_COPY         | 5     | none   | none             |
+    | R_X86_64_GLOB_DAT     | 6     | word64 | S                |
+    | R_X86_64_JUMP_SLOT    | 7     | word64 | S                |
+    | R_X86_64_RELATIVE     | 8     | word64 | B + A            |
+    | R_X86_64_GOTPCREL     | 9     | word32 | G + GOT + A - P  |
+    | R_X86_64_32           | 10    | word32 | S + A            |
+    | R_X86_64_32S          | 11    | word32 | S + A            |
+    | R_X86_64_16           | 12    | word16 | S + A            |
+    | R_X86_64_PC16         | 13    | word16 | S + A - P        |
+    | R_X86_64_8            | 14    | word8  | S + A            |
+    | R_X86_64_PC8          | 15    | word8  | S + A - P        |
+    | R_X86_64_DPTMOD64     | 16    | word64 |                  |
+    | R_X86_64_DTPOFF64     | 17    | word64 |                  |
+    | R_X86_64_TPOFF64      | 18    | word64 |                  |
+    | R_X86_64_TLSGD        | 19    | word32 |                  |
+    | R_X86_64_TLSLD        | 20    | word32 |                  |
+    | R_X86_64_DTPOFF32     | 21    | word32 |                  |
+    | R_X86_64_GOTTPOFF     | 22    | word32 |                  |
+    | R_X86_64_TPOFF32      | 23    | word32 |                  |
+
+    ref:
+    System V Application Binary Interface AMD64 Architecture Processor Supplement
+    4.4 Relocation
+    - https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf
+    - https://www.ucw.cz/~hubicka/papers/abi/node19.html
      */
 
     /*

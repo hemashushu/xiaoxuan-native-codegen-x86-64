@@ -32,6 +32,8 @@ yasm -g dwarf2 -f elf64 -o branch.o branch.S
 yasm -g dwarf2 -f elf64 -o stack.o stack.S
 yasm -g dwarf2 -f elf64 -o call.o call.S
 yasm -g dwarf2 -f elf64 -o syscall.o syscall.S
+yasm -g dwarf2 -f elf64 -o extcall.o extcall.S
+yasm -g dwarf2 -f elf64 -o variable-args.o variable-args.S
 
 yasm -g dwarf2 -f elf64 -o float-mov.o float-mov.S
 yasm -g dwarf2 -f elf64 -o float-conversion.o float-conversion.S
@@ -48,6 +50,8 @@ ld -g -o branch.elf branch.o
 ld -g -o stack.elf stack.o
 ld -g -o call.elf call.o
 ld -g -o syscall.elf syscall.o
+gcc -g -no-pie -o extcall.elf extcall.o
+gcc -g -no-pie -o variable-args.elf variable-args.o
 
 ld -g -o float-mov.elf float-mov.o
 ld -g -o float-conversion.elf float-conversion.o
