@@ -4,12 +4,17 @@
 
 ```ason
 [
-(instruction, opcode, operand1, operand2, operand3, operand4,)
+(instruction, opcode, valid_64, valid_32, valid_16, features, operand1, operand2, operand3, operand4,)
 ...
 ]
 ```
 
-Both `instruction` and `opcode` are `String`, and `operandN` are `Option<String>`.
+The data types:
+- `instruction`: String
+- `opcode`: String
+- `valid_64`, `valid_32`, `valid_16`: Boolean
+- `features`: Array<String>
+- `operandN`: Option<String>
 
 See also:
 - https://github.com/hemashushu/x86_encoding_ason
